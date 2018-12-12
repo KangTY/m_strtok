@@ -6,17 +6,44 @@
 
 char *m_strtok(char *str, const char *delimiters)
 {
-    char *start = str; // 문자열 시작 주소값
+    // 함수 재호출시 새로운 시작 주소값
+    static char *next;
+
+    // delimiters의 주소값
+    char *finish = str;
+
+    // 문자열 시작 주소값
+    char *start = str;
+
+    // NULL의 인자를 가지고 함수가 재호출 되었을 때
+    if(str == NULL)
+    {
+        start = next;
+	finish = next;
+    }
+
+    // 문자열을 다 나누었을 때
+    if(finish == NULL && next == NULL)
+        return NULL;
 
     while(1)
     {
-         str++;
+        //문자열에 문자가 더이상 없을 때
+        if(*finish == '\0')
+	{
+	    next = NULL;
+	    break;
+	}
 
-	 if(*str == *delimiters) // 문자열의 문자와  delimiters가 같으면
-	 {
-	     *str = '\0'; // delimiters를 NUL로 변경
-	     break;
-	 }
+        // 문자열의 문자와 delimiters의 값이 같을 때
+	if(*finish == *delimiters)
+	{
+	    *finish = '\0';
+	    next = finish + 1;
+	    break;
+	}
+
+	finish++;
     }
 
     return start;
@@ -24,10 +51,16 @@ char *m_strtok(char *str, const char *delimiters)
 
 int main()
 {
-    char *result;  // 결과값 저장 변수
+    char *result;
 
     char str[50] = "Basic System Programming";
     
     result = m_strtok(str, " ");
-    printf("%s\n", result);
+    
+    while(result != NULL)
+    {
+        printf("%s\n", result);
+	result = m_strtok(NULL, " ");
+    }
+
 }
